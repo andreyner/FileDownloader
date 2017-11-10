@@ -12,7 +12,7 @@ namespace PSR_File_Downloader.IAction
         /// <summary>
         /// UI
         /// </summary>
-        public Window window { get; set; }
+        Window window { get; set; }
         /// <summary>
         /// Фильтр для нужных файлов
         /// </summary>

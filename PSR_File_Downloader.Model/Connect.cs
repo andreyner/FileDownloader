@@ -7,14 +7,9 @@ using System.Threading.Tasks;
 
 namespace PSR_File_Downloader.Model
 {
-   public  class PSRL:PSR
+    public abstract  class Connect 
     {
-       public PSRL()
-           : base()
-       {
 
-           //this.WIFiIPadres = "psr" + wagonnumber + ".mshome.net"; 
 
-       }
     }
 }

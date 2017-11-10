@@ -1,7 +1,9 @@
 ﻿using PSR_File_Downloader.Model;
+using PSR_File_Downloader.Model.Connects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -9,21 +11,20 @@ using System.Windows;
 namespace PSR_File_Downloader.IAction
 {
    public interface IPSR
-   {  
+   {
+       event Action<int> prbarIncrement;
+       event Action<double> prbarmax;
+       event Action<string> prbartext;
        /// <summary>
-       /// UI 
-       /// </summary>
-       public Window window { get; set; }
-       /// <summary>
-       /// Установить нудный логин/пароль для ПСР
+       /// Установить нужный логин/пароль для ПСР
        /// </summary>
        /// <param name="psr"></param>
-       void SetLoginPassword(ref PSR psr);
+       void SetLoginPassword(ref Wagon wagon);
        /// <summary>
        /// Проверить соединение с ПСР
        /// </summary>
        /// <param name="psr"></param>
-       void ChekConnect(PSR psr);
+      void ChekConnect(PSR psr);
        /// <summary>
        /// Загрузка файла с ПСР
        /// </summary>
@@ -31,12 +32,31 @@ namespace PSR_File_Downloader.IAction
        /// <param name="twoWeek"> загрузка/не загрузка за последние 2 недели</param>
        /// <param name="psr"> ПСР</param>
        /// <returns></returns>
-       List<Files> Download(Files file, bool twoWeek, PSR psr);
+       void Download(List<Files> files, Wagon wagon, string path);
        /// <summary>
        /// Получить список файлов с ПСР
        /// </summary>
        /// <param name="psr"></param>
        /// <returns></returns>
-       List<Files> GetListFilesFromPSR( PSR psr);
+       List<Files> GetListFilesFromPSR(Wagon wagon, bool twoWeek);
+       /// <summary>
+       /// Получить IP адресс ПСР
+       /// </summary>
+       /// <param name="psr"> ПСР</param>
+       /// <param name="connect"> соедение</param>
+       /// <returns> IP адрес</returns>
+       string GetIP(PSR psr, Connect connect);
+       /// <summary>
+       /// Проверка существования сети на компьютере
+       /// </summary>
+       /// <param name="psr"></param>
+       /// <returns></returns>
+       bool Existnetwor(PSR psr);
+       /// <summary>
+       /// Создаёт wi-fi сеть на компьютере
+       /// </summary>
+       /// <returns></returns>
+       void CreatWi_FiNetwor();
+ 
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using PSR_File_Downloader.IAction;
 using PSR_File_Downloader.Model;
 using System.Windows;
-namespace PSR_File_Downloader.Action
+namespace PSR_File_Downloader.Actions
 {
     public class FilesAction:IFile
     {
@@ -19,16 +19,19 @@ namespace PSR_File_Downloader.Action
             throw new NotImplementedException();
         }
 
-        public List<Files> DownloaderFile(List<PSR_File_Downloader.Model.Files> files)
+        public List<Files> DownloaderFile(List<Files> files)
         {
             throw new NotImplementedException();
         }
 
-        public List<Files> NotDownload(string pathrepositoryOnComputer, List<PSR_File_Downloader.Model.Files> requaredFile)
+        public List<Files> NotDownload(string path, List<Files> requaredFile)
         {
             throw new NotImplementedException();
         }
 
+
+   
+    
 
         public Window window
         {
@@ -38,7 +41,7 @@ namespace PSR_File_Downloader.Action
             }
             set
             {
-                throw new NotImplementedException();
+              
             }
         }
     }

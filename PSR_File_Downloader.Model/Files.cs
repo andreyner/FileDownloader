@@ -11,19 +11,7 @@ namespace PSR_File_Downloader.Model
         /// <summary>
         /// Исходное имя файла
         /// </summary>
-     public string NameSource
-        {
-
-            get
-            {
-                return namefinaly;
-            }
-            set
-            {
-                ///релизовать новое имя
-            }
-        }
-     private string namefinaly;
+     public string Name { get; set; }
         /// <summary>
         /// Дата изменения файла
         /// </summary>
@@ -32,10 +20,7 @@ namespace PSR_File_Downloader.Model
         /// Размер файла
         /// </summary>
      public int size { get; set; }
-        /// <summary>
-        /// Конечное имя файла
-        /// </summary>
-     public string NameFinaly { get; set; }
+
 
     }
 }

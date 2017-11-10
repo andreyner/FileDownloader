@@ -9,11 +9,28 @@ namespace PSR_File_Downloader.Model
 {
     public class PSRM : PSR
     {
+
         public PSRM()
+            : base()
         {
-            this.Type = type.M;
-            this.IPpsr = new IPAddress(Encoding.UTF8.GetBytes("10.49.24.240"));
+
+
         }
+        // public string WIFiIPadres 
+        //{ 
+        //    get
+        //    {
+        //        throw new Exception("Данный ПСР не поддерживает WI-FI");
+        //    }
+            
+            
+        //     set
+        //     {
+
+        //         throw new Exception("Данный ПСР не поддерживает WI-FI");
+        //     }
+                 
+        //}
 
     }
 }

@@ -53,6 +53,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="DownloadWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -60,6 +64,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DownloadWindow.xaml.cs">
+      <DependentUpon>DownloadWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -94,6 +101,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\PSR_File_Downloader.Action\PSR_File_Downloader.Action.csproj">
+      <Project>{d15368f6-33d6-427e-bbc0-4b08f3f634fe}</Project>
+      <Name>PSR_File_Downloader.Action</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PSR_File_Downloader.IAction\PSR_File_Downloader.IAction.csproj">
+      <Project>{15dd22a0-9c41-4894-b56c-9471007a307a}</Project>
+      <Name>PSR_File_Downloader.IAction</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PSR_File_Downloader.Model\PSR_File_Downloader.Model.csproj">
       <Project>{a621ec2d-b821-4d2a-bd12-2978c4efa28f}</Project>
       <Name>PSR_File_Downloader.Model</Name>

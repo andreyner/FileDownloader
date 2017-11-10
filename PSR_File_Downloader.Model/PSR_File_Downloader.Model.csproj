@@ -39,6 +39,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Connect.cs" />
+    <Compile Include="Connects\Ethernet.cs" />
+    <Compile Include="Connects\WI-FI.cs" />
     <Compile Include="Files.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PSR.cs" />

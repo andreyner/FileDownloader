@@ -1,9 +1,50 @@
 ﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="PSR_File_Downloader.UI.MainWindow"
-        Title="MainWindow" Height="645" Width="787">
-    <Grid Margin="10,0,2,5" ShowGridLines="True">
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Model="clr-namespace:PSR_File_Downloader.Model;assembly=PSR_File_Downloader.Model" mc:Ignorable="d" x:Class="PSR_File_Downloader.UI.MainWindow"
+        Title="MainWindow" Height="669.421" Width="868.882" Loaded="Window_Loaded" MinWidth="851.644" MinHeight="666.548">
+    <Window.Resources>
+
+        <ControlTemplate TargetType="{x:Type Button}" x:Key="btTemplate">
+            <Border 
+        		CornerRadius="25"
+        		BorderBrush="{TemplateBinding BorderBrush}"
+        		BorderThickness="{TemplateBinding BorderThickness}"
+        		Background="{TemplateBinding Background}"
+        		Height="{TemplateBinding Height}"
+        		Width="{TemplateBinding Width}" >
+                <ContentControl Margin="{TemplateBinding Padding}"
+        			HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+        			VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+        			Content="{TemplateBinding Content}" />
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="Background" Value="Yellow" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+
+                    <Setter Property="BorderBrush" Value="LightGreen" />
+                    <Setter Property="Background"  Value="LightGreen" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <Style TargetType="{x:Type ComboBox}">
+
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontFamily" Value="Verdana" />
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Yellow" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid Margin="10,0,2,5" ShowGridLines="True" MinWidth="832" MinHeight="632">
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="504*"/>
             <ColumnDefinition Width="263*"/>
@@ -13,31 +54,41 @@
             <RowDefinition Height="99*" MinHeight="1"/>
             <RowDefinition Height="23*" MinHeight="51"/>
         </Grid.RowDefinitions>
-        <DataGrid HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.Row="1" Margin="0,10,0,0" >
+        <DataGrid x:Name="FilesDGV" AutoGenerateColumns="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.Row="1" Margin="0,10,0,0" SelectionChanged="DataGrid_SelectionChanged" FontSize="16" FontWeight="Bold" IsReadOnly="True" CanUserResizeRows="False" >
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Имя" Width="60*"/>
-                <DataGridTextColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Размер" Width="20*"/>
-                <DataGridTextColumn Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="Дата изменения" Width="20*"/>
+                <DataGridTextColumn Header="Имя" Width="40*" Binding="{Binding Name}" CanUserResize="False"/>
+                <DataGridTextColumn Header="Размер" Width="25*" Binding="{Binding size}" CanUserResize="False"/>
+                <DataGridTextColumn Header="Дата изменения" Width="40*" Binding="{Binding DateChange}" CanUserResize="False"/>
             </DataGrid.Columns>
         </DataGrid>
-        <GroupBox Header="Расположение каталога" Margin="10,10,0,19" Grid.Row="2">
-            <Viewbox>
-                <TextBlock TextWrapping="Wrap" Text="TextBlock" Width="156" Height="18"/>
+        <GroupBox Header="Расположение каталога" Margin="10,10,0,0" Grid.Row="2">
+            <Viewbox StretchDirection="UpOnly" Margin="0,0,0,-3">
+                <TextBox x:Name="Catalogpath_" Height="36" TextWrapping="Wrap" Width="200" VerticalContentAlignment="Stretch" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto" FontSize="6"/>
             </Viewbox>
         </GroupBox>
         <Grid Grid.Column="1" Margin="0,2,0,10" Grid.RowSpan="2">
             <Grid.RowDefinitions>
-                <RowDefinition Height="139*"/>
-                <RowDefinition Height="15*"/>
-                <RowDefinition Height="14*"/>
-                <RowDefinition Height="50*"/>
-                <RowDefinition Height="48*"/>
-                <RowDefinition Height="53*"/>
-                <RowDefinition Height="55*"/>
+                <RowDefinition Height="136*"/>
+                <RowDefinition Height="0*"/>
                 <RowDefinition Height="54*"/>
-                <RowDefinition Height="55*"/>
+                <RowDefinition Height="0*"/>
+                <RowDefinition Height="54*"/>
+                <RowDefinition Height="0*"/>
+                <RowDefinition Height="46*"/>
+                <RowDefinition Height="0*"/>
+                <RowDefinition Height="50*"/>
+                <RowDefinition Height="54*"/>
+                <RowDefinition Height="53*"/>
+                <RowDefinition Height="54*"/>
             </Grid.RowDefinitions>
-            <GroupBox Header="Тип подключения" FontWeight="Bold" BorderBrush="#FF2980B4" Background="#FFDDF10F">
+            <GroupBox  FontWeight="Bold" BorderBrush="#FF2980B4" Background="#FFDDF10F"  >
+                <GroupBox.Header  >
+                    <Viewbox  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  >
+                        <TextBlock Text="Тип подключения" FontWeight="Bold" FontSize="14" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"   />
+                    </Viewbox>
+                </GroupBox.Header>
+
+
                 <Grid ShowGridLines="True" Margin="0,0,-2,0">
                     <Grid.Background>
                         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -56,53 +107,74 @@
                         <RowDefinition Height="29*"/>
                     </Grid.RowDefinitions>
                     <Viewbox Grid.Row="3" RenderTransformOrigin="2.86,-2.379">
-                        <RadioButton Content="WI-FI" GroupName="TypeConnect" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" Width="129"/>
+                        <RadioButton x:Name="Wificheckbox" Content="WI-FI" GroupName="TypeConnect" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" Width="157" Checked="wifichexbox_Checked_1"/>
                     </Viewbox>
                     <Viewbox Grid.Row="2">
-                        <RadioButton Content="ПСР-М" HorizontalAlignment="Center" VerticalAlignment="Center" GroupName="Type_PSR" IsThreeState="True" IsChecked="True" Height="16" Width="85" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+                        <RadioButton x:Name="PSRM_chexbox" Content="ПСР-М" HorizontalAlignment="Center" VerticalAlignment="Center" GroupName="Type_PSR" IsThreeState="True" IsChecked="True" Height="16" Width="110" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Checked="PSRM_chexbox_Checked"/>
                     </Viewbox>
                     <Viewbox Margin="0" Grid.Row="1">
-                        <RadioButton Content="ПСР ЛЭ, Л" GroupName="Type_PSR" RenderTransformOrigin="-2.413,1.729" Height="16" Width="85" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <RadioButton x:Name="PSRL_LE_chexbox" Content="ПСР ЛЭ, Л" GroupName="Type_PSR" RenderTransformOrigin="-2.413,1.729" Height="16" Width="110" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalAlignment="Center" VerticalAlignment="Center" Checked="PSRL_LE_chexbox_Checked"/>
                     </Viewbox>
                     <Viewbox Margin="0">
-                        <RadioButton Content="Ethernet" GroupName="TypeConnect" IsChecked="True" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Width="129"/>
+                        <RadioButton x:Name="Ethernetchbox" Content="Ethernet" GroupName="TypeConnect" IsChecked="True" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Width="157" Checked="Ethernetchbox_Checked"/>
+
                     </Viewbox>
                 </Grid>
             </GroupBox>
-            <Button Margin="10" Grid.Row="6" FontWeight="Bold" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-                <Viewbox OpacityMask="#FFB42E2E" StretchDirection="UpOnly" Margin="0">
-                    <TextBlock TextWrapping="Wrap" Text="Показать файлы на ПСР" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Normal" FontFamily="Times New Roman"
+            <Button x:Name="showfile_btn" Template="{StaticResource btTemplate}" Margin="0,10,0,0" Grid.Row="9" FontWeight="Bold" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Click="showfile_btn_Click">
+                <Viewbox OpacityMask="#FFB42E2E" StretchDirection="UpOnly" Margin="18,1">
+                    <TextBlock TextWrapping="Wrap" Text="Показать файлы на ПСР" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Normal" FontFamily="Times New Roman" Height="14" Width="124"
                        />
                 </Viewbox>
             </Button>
-            <Button Margin="10" Grid.Row="7" FontWeight="Bold" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-                <Viewbox Margin="0">
-                    <TextBlock TextWrapping="Wrap" FontWeight="Normal" FontFamily="Times New Roman" HorizontalAlignment="Center" VerticalAlignment="Center"><Run Language="ru-ru" Text="Загрузить"/></TextBlock>
+            <Button x:Name="btndownload" Template="{StaticResource btTemplate}" Margin="0,10,0,0" Grid.Row="10" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Stretch" Click="btndownload_Click">
+                <Viewbox RenderTransformOrigin="2.2,0.541" Width="218">
+                    <TextBlock TextWrapping="Wrap" FontWeight="Normal" FontFamily="Times New Roman" HorizontalAlignment="Center" VerticalAlignment="Center" Height="16" Width="53"><Run Language="ru-ru" Text="Загрузить"/></TextBlock>
                 </Viewbox>
             </Button>
-            <Button Margin="10,10,10,0" Grid.Row="8" RenderTransformOrigin="-0.12,-0.818" FontWeight="Bold" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-                <Viewbox Margin="0" StretchDirection="UpOnly">
-                    <TextBlock TextWrapping="Wrap" Text="Снять выделенное" FontFamily="Times New Roman" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Normal"/>
-                </Viewbox>
-            </Button>
-            <Viewbox Grid.Row="4" Margin="10,0,0,0">
+            <Viewbox Grid.Row="6" Margin="10,0,0,0">
                 <CheckBox Content="Использовать подкаталог" Width="168" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
             </Viewbox>
-            <Viewbox Grid.Row="3" StretchDirection="UpOnly">
-                <ComboBox FontSize="14" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="25" Width="191">
+            <Viewbox Grid.Row="3" StretchDirection="UpOnly" Grid.RowSpan="2">
+                <ComboBox x:Name="TimeArrangeCmBx" FontSize="14" FontWeight="Bold" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" BorderThickness="0" SelectedIndex="0" Padding="4,3,0,3" Height="32" SelectionChanged="ComboBox_SelectionChanged">
+                    <ComboBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ComboBoxItem}">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True"/>
+                            </Style.Triggers>
+                        </Style>
+                    </ComboBox.ItemContainerStyle>
                     <ComboBoxItem Content="Показать за посл. 2 нед" HorizontalAlignment="Left" Width="241" Selected="ComboBoxItem_Selected" IsSelected="True"/>
                     <ComboBoxItem Content="Показать весь список" HorizontalAlignment="Left" Width="241"/>
                 </ComboBox>
             </Viewbox>
-            <Viewbox Margin="0,5,0,0" Grid.Row="5" Stretch="Fill">
-                <TextBlock TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Viewbox StretchDirection="UpOnly" Grid.Row="8">
+                <TextBox x:Name="txtbundercatalog" TextWrapping="Wrap" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="19"/>
             </Viewbox>
-            <Viewbox Grid.Row="1" HorizontalAlignment="Left" Width="75" Grid.RowSpan="2">
-                <TextBlock TextWrapping="Wrap" Text="№ вагона" Width="55"/>
-            </Viewbox>
-            <Viewbox Grid.Row="1" Margin="80,0,0,0" Grid.RowSpan="2" HorizontalAlignment="Right">
-                <ComboBox Width="147" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="0,3"/>
-            </Viewbox>
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0*"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30*"/>
+                    <ColumnDefinition Width="70*"/>
+                </Grid.ColumnDefinitions>
+                <Viewbox Grid.Column="1" Grid.RowSpan="2">
+                    <ComboBox x:Name="WagonNumberCombBox"  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="0,3" Height="22" Width="111" FontWeight="Bold"/>
+                </Viewbox>
+                <Viewbox Grid.RowSpan="2" StretchDirection="UpOnly">
+                    <TextBlock TextWrapping="Wrap" Text="№ вагона" RenderTransformOrigin="-1.68,0.471"/>
+                </Viewbox>
+            </Grid>
+
+            <Button x:Name="Selectall" Template="{StaticResource btTemplate}" Margin="0,10,0,0" Grid.Row="11" RenderTransformOrigin="-0.12,-0.818" FontWeight="Bold" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+                <Viewbox Margin="0" StretchDirection="UpOnly">
+                    <TextBlock TextWrapping="Wrap" Text="Снять выделенное" FontFamily="Times New Roman" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Normal" Height="16" Width="95"/>
+                </Viewbox>
+            </Button>
         </Grid>
     </Grid>
+
+
 </Window>
