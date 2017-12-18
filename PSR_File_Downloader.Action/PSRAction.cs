@@ -11,15 +11,15 @@ using System.IO;
 using PSR_File_Downloader.Model.Connects;
 using System.Net.NetworkInformation;
 using System.Threading;
+using System.Text.RegularExpressions;
+using PSR_File_Downloader.Actions.Helper;
 
 namespace PSR_File_Downloader.Actions
 {
    public  class PSRAction:IPSR
     {
 
-       public event Action<int> prbarIncrement;
-       public  event Action<double> prbarmax;
-       public  event Action<string> prbartext;
+
        public PSRAction()
        {
            
@@ -41,10 +41,9 @@ namespace PSR_File_Downloader.Actions
                 wagon.psr.Password = "ftppsr";
                 return;
             }
-#warning тут ошибка
             if (wagon.psr.connect is Ethernet && (wagon.psr is PSRM))
             {
-                wagon.psr.IPadres = "192.168.105.181";
+                wagon.psr.IPadres = "10.49.24.240";
                 wagon.psr.Login = "";
                 wagon.psr.Password = "";
                 return;
@@ -57,93 +56,14 @@ namespace PSR_File_Downloader.Actions
         {
             Ping ping = new Ping();
 
-            if(ping.Send(psr.IPadres, 3000).Status!=IPStatus.Success)
+            if (ping.Send(psr.IPadres, 3000).Status != IPStatus.Success)
             {
                 throw new Exception("Не удалось установить связь с ПСР");
             }
              
         }
 
-        public void Download(List<Files> files, Wagon wagon,string path)
-        {
-            prbarmax(files.Sum(f=>f.size));
-            foreach (var file in files)
-            {
-
-              
-                // Создаем объект FtpWebRequest
-                FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://" + wagon.psr.IPadres + "/"+file.Name);
-                // устанавливаем метод на загрузку файлов
-                request.Method = WebRequestMethods.Ftp.DownloadFile;
-
-                // если требуется логин и пароль, устанавливаем их
-                //request.Credentials = new NetworkCredential("login", "password");
-                //request.EnableSsl = true; // если используется ssl
-              
-                // получаем ответ от сервера в виде объекта FtpWebResponse
-                using (FtpWebResponse response = (FtpWebResponse)request.GetResponse())
-                {
-
-                    // получаем поток ответа
-                    Stream responseStream = response.GetResponseStream();
-                    // сохраняем файл в дисковой системе
-                    // создаем поток для сохранения файла
-
-                    using (FileStream fs = new FileStream(path + @"\" + file.Name, FileMode.Create))
-                    {
-                        //Буфер для считываемых данных
-                        byte[] buffer = new byte[4096];
-                        int size = 0;
-                        prbartext(file.Name);
-                        while ((size = responseStream.Read(buffer, 0, buffer.Length)) > 0)
-                        {
-                            prbarIncrement(size);
-                            fs.Write(buffer, 0, size);
-
-                        }
-                    }
-
-                }
-            }
-        }
-
-        public List<Files> GetListFilesFromPSR(Wagon wagon, bool twoWeek)
-        {
-         
-           SetLoginPassword(ref wagon);
-           if (wagon.psr.connect is WI_FI)
-           {
-               CreatWi_FiNetwor();
-           }
-           Existnetwor(wagon.psr);
-           ChekConnect(wagon.psr);
-
-
-           FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://" + wagon.psr.IPadres + "/");
-           request.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
-           FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-           Stream responseStream = response.GetResponseStream();
-           StreamReader reader = new StreamReader(responseStream);
-           string file = "";
-           List<Files> fileinfo = new List<Files>();
-         
-           while ((file = reader.ReadLine()) != null)
-           {
-               string[] f = file.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-               fileinfo.Add(new Files
-               {
-                   Name = f[3],
-                   size = Convert.ToInt32(f[2]),
-                   DateChange = DateTime.Parse(f[0]+" "+f[1])
-               });
-
-
-           }
-
-           return fileinfo;
-           
-        }
-
+        
         public string GetIP(PSR psr, Connect connect)
         {
 
@@ -157,7 +77,7 @@ namespace PSR_File_Downloader.Actions
             {
                 string Host = System.Net.Dns.GetHostName();
                 IPAddress[] IP = System.Net.Dns.GetHostEntry(Host).AddressList;
-                if (!IP.Select(ip => ip.ToString().Contains("192.168.105.") && !ip.ToString().Contains("10.49.24.240")).Contains(true))
+                if (!IP.Select(ip => ip.ToString().Contains("10.49.24.") && !ip.ToString().Contains("10.49.24.240")).Contains(true))
                 {
                     throw new Exception("Установите нужный IP адрес на компьютере,например 10.49.24.230");
                 

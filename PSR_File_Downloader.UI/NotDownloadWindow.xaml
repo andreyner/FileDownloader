@@ -1,0 +1,22 @@
+﻿<Window x:Class="PSR_File_Downloader.UI.NotDownloadWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Незагруженные файлы" Height="495" Width="565" ResizeMode="NoResize" Background="#FFE41313" BorderBrush="#FFF10000" Foreground="#FFE60C0C">
+    <Grid>
+        <DataGrid x:Name="DataGFile" AutoGenerateColumns="False" CanUserResizeRows="False">
+            <DataGrid.Background>
+                <RadialGradientBrush>
+                    <GradientStop Color="#FFF02100" Offset="0.72"/>
+                    <GradientStop Color="#FF7E4747" Offset="0.491"/>
+                    <GradientStop Color="#FF7E4747" Offset="0.906"/>
+                </RadialGradientBrush>
+            </DataGrid.Background>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Имя" Width="40*" Binding="{Binding Name}" CanUserResize="False"/>
+                <DataGridTextColumn Header="Размер" Width="25*" Binding="{Binding size}" CanUserResize="False"/>
+                <DataGridTextColumn Header="Дата изменения" Width="40*" Binding="{Binding DateChange}" CanUserResize="False"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+    </Grid>
+</Window>

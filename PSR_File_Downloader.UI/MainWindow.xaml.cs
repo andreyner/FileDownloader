@@ -1,17 +1,25 @@
-﻿using PSR_File_Downloader.Actions;
+﻿using Microsoft.Win32;
+using PSR_File_Downloader.Actions;
+using PSR_File_Downloader.Actions.FileActions;
+using PSR_File_Downloader.Actions.PSRActions;
 using PSR_File_Downloader.IAction;
 using PSR_File_Downloader.Model;
 using PSR_File_Downloader.Model.Connects;
+using PSR_File_Downloader.UI.Resource;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -20,14 +28,12 @@ using System.Windows.Shapes;
 
 namespace PSR_File_Downloader.UI
 {
-    /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
-    /// </summary>
+ 
     public partial class MainWindow : Window
     {
         IPSR psractions;
-        IFile file;
-        PSR psr;
+        IFile fileactions;
+        public PSR psr;
         Connect connect;
         Wagon wagon;
         bool twoweek;
@@ -35,32 +41,12 @@ namespace PSR_File_Downloader.UI
         DownloadWindow dowmloadwindow;
         public  MainWindow()
         {
-          
-            InitializeComponent();
             psractions = new PSRAction();
-            dowmloadwindow = new DownloadWindow();
-            psractions.prbarIncrement += dowmloadwindow.PrBarIncremnt;
-            psractions.prbarmax += dowmloadwindow.PrBarMax;
-            psractions.prbartext += dowmloadwindow.PrBarTxt;
-
-            file = new FilesAction(this);
-
+            InitializeComponent();          
+            CultureInfo ci = new CultureInfo("ru-RU");
             twoweek = true;
         }
-        private void ComboBoxItem_Selected(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void CheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
+      
 
      
 
@@ -81,6 +67,8 @@ namespace PSR_File_Downloader.UI
         private void PSRL_LE_chexbox_Checked(object sender, RoutedEventArgs e)
         {
             psr = new PSRLE();
+            DateConverter.psr = psr;
+            fileactions = new FileActionPSRL(psractions);
 
           
         }
@@ -88,6 +76,8 @@ namespace PSR_File_Downloader.UI
         private void PSRM_chexbox_Checked(object sender, RoutedEventArgs e)
         {
             psr = new PSRM();
+            DateConverter.psr = psr;
+            fileactions = new FileActionPSRM(psractions);
           
         }
         
@@ -108,8 +98,17 @@ namespace PSR_File_Downloader.UI
             using (StreamReader fr = new StreamReader(@"Catalog.txt"))
             {
                 String result = await fr.ReadToEndAsync();
-                string mainpath = result.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)[0];
-                string addpath = result.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)[1];
+                string mainpath = "";
+                string addpath = "";
+               
+                if (result.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).Length > 0)
+                {
+                    mainpath = result.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)[0];
+                }
+                if (result.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).Length > 1)
+                {
+                    addpath = result.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)[1].Trim();
+                }
                 if (Directory.Exists(mainpath))
                 {
                     pathfinaly = mainpath;
@@ -117,8 +116,10 @@ namespace PSR_File_Downloader.UI
                     if (Directory.Exists(mainpath + @"\\" + addpath))
                     {
                         txtbundercatalog.Text = addpath;
-                        pathfinaly = mainpath + @"\\" + addpath;
+                        
+                       
                     }
+                    
 
                 }
             }
@@ -127,15 +128,25 @@ namespace PSR_File_Downloader.UI
 
         private async void showfile_btn_Click(object sender, RoutedEventArgs e)
         {
-            wagon = new Wagon();
-            psr.connect = connect;
-            wagon.psr = psr;
-            wagon.number = WagonNumberCombBox.Text;
-            //List<Files> files = await psractions.GetListFilesFromPSR(wagon, twoweek);
-            List<Files> files = await Task.Run<List<Files>>(() => { return psractions.GetListFilesFromPSR(wagon, twoweek);});
-            FilesDGV.ItemsSource = files;
-             
+            try
+            {
 
+                wagon = new Wagon();
+                psr.connect = connect;
+                wagon.psr = psr;
+                wagon.number = WagonNumberCombBox.Text;
+                List<Files> files = await Task.Run<List<Files>>(() => { return fileactions.GetListFilesFromPSR(wagon, twoweek); });
+                FilesDGV.ItemsSource = files;
+            }
+            catch (Exception ex)
+            {
+
+                System.Windows.MessageBox.Show(ex.Message, "Внимание", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            }
+            finally { this.IsEnabled = true; }
+            
+           
         }
      
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -146,15 +157,116 @@ namespace PSR_File_Downloader.UI
 
         private async void btndownload_Click(object sender, RoutedEventArgs e)
         {
-            List<Files> list = FilesDGV.SelectedItems.OfType<Files>().ToList();
-            this.IsEnabled = false;
-            dowmloadwindow.Show();
-            await Task.Run(() => { psractions.Download(list, wagon, pathfinaly);});
-            dowmloadwindow.Close();
-            this.IsEnabled = true;
-           
-        
+            List<Files> filesnoDownload=null;
+            if (txtbundercatalog.Text.Trim() == ""&& chekbxusingundercatalog.IsChecked==true)
+            {
+                System.Windows.MessageBox.Show("Некорректное имя подпапки!", "Внимание", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (chekbxusingundercatalog.IsChecked == true && Directory.Exists(Catalogpath_.Text) && !Directory.Exists(Catalogpath_.Text + @"\\" + txtbundercatalog.Text))
+            {
+                Directory.CreateDirectory(Catalogpath_.Text + @"\\" + txtbundercatalog.Text);
+                pathfinaly = Catalogpath_.Text + @"\\" + txtbundercatalog.Text;
+            }
+            try
+            {
+                CancellationTokenSource canceldownload = new CancellationTokenSource();
+                if (FilesDGV.SelectedItems.Count > 0)
+                {
+                    dowmloadwindow = new DownloadWindow(canceldownload);
 
+                    fileactions.prbarIncrement += dowmloadwindow.PrBarIncremntAllfiles;
+                    fileactions.prbarmax += dowmloadwindow.PrBarMaxAllfiles;
+                    fileactions.prbartext += dowmloadwindow.PrBarTxtAllfiles;
+
+                    fileactions.prbarIncrementOneFile += dowmloadwindow.PrBarIncremntOneFile;
+                    fileactions.prbarmax += dowmloadwindow.PrBarMaxOneFile;
+                    fileactions.prbarvalueOneFile += dowmloadwindow.PrBarValueOneFile;
+                    List<Files> list = FilesDGV.SelectedItems.OfType<Files>().ToList();
+                    this.IsEnabled = false;
+                    dowmloadwindow.Show();
+                    await Task.Run(() => { fileactions.DownloaderFiles(list, wagon, pathfinaly, canceldownload); });
+                    dowmloadwindow.Close();
+                    filesnoDownload = fileactions.NotDownload(pathfinaly, list).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                System.Windows.MessageBox.Show(ex.Message, "Внимание", MessageBoxButton.OK, MessageBoxImage.Error);
+
+
+            }
+            finally
+            {
+                if (filesnoDownload != null)
+                {
+                    if (filesnoDownload.Count > 0)
+                    {
+                        NotDownloadWindow notdownloadwindow = new NotDownloadWindow(filesnoDownload);
+                        notdownloadwindow.ShowDialog();
+                    }
+                }
+                this.IsEnabled = true;
+            }
         }
+
+        private void Catalogpath__MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            FolderBrowserDialog savepath = new FolderBrowserDialog();
+
+            if (savepath.ShowDialog()==System.Windows.Forms.DialogResult.OK)
+            {
+
+                if (Directory.Exists(savepath.SelectedPath))
+                {
+                    Catalogpath_.Text = savepath.SelectedPath;
+                    if (Directory.Exists(Catalogpath_.Text + @"\\" + txtbundercatalog.Text))
+                    {
+
+                        pathfinaly = savepath.SelectedPath + @"\\" + txtbundercatalog.Text;
+
+                    }
+                    else 
+                    {
+                        pathfinaly = savepath.SelectedPath;
+
+                    }
+                  
+                }
+            }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (Directory.Exists(Catalogpath_.Text))
+            {
+               
+                if (Directory.Exists(Catalogpath_.Text + @"\\" + txtbundercatalog.Text))
+                {
+
+                    using (StreamWriter fr = new StreamWriter(@"Catalog.txt", false))
+                    {
+                        fr.WriteLine(Catalogpath_.Text);
+                        fr.WriteLine(txtbundercatalog.Text);
+
+                    }
+                }
+                else
+                {
+                    using (StreamWriter fr = new StreamWriter(@"Catalog.txt", false))
+                    {
+
+                        fr.WriteLine(Catalogpath_.Text);
+
+                    }
+
+                }
+
+            }
+        }
+
+
     }
 }
+

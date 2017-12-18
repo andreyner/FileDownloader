@@ -12,9 +12,7 @@ namespace PSR_File_Downloader.IAction
 {
    public interface IPSR
    {
-       event Action<int> prbarIncrement;
-       event Action<double> prbarmax;
-       event Action<string> prbartext;
+
        /// <summary>
        /// Установить нужный логин/пароль для ПСР
        /// </summary>
@@ -25,20 +23,7 @@ namespace PSR_File_Downloader.IAction
        /// </summary>
        /// <param name="psr"></param>
       void ChekConnect(PSR psr);
-       /// <summary>
-       /// Загрузка файла с ПСР
-       /// </summary>
-       /// <param name="file"> Нужный файл</param>
-       /// <param name="twoWeek"> загрузка/не загрузка за последние 2 недели</param>
-       /// <param name="psr"> ПСР</param>
-       /// <returns></returns>
-       void Download(List<Files> files, Wagon wagon, string path);
-       /// <summary>
-       /// Получить список файлов с ПСР
-       /// </summary>
-       /// <param name="psr"></param>
-       /// <returns></returns>
-       List<Files> GetListFilesFromPSR(Wagon wagon, bool twoWeek);
+ 
        /// <summary>
        /// Получить IP адресс ПСР
        /// </summary>
